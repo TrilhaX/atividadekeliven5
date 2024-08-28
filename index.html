@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercícios de Manipulação de DOM</title>
+    <style>
+        .completed {
+            text-decoration: line-through;
+        }
+        .highlight {
+            border: 2px solid red;
+        }
+        .image-gallery img {
+            cursor: pointer;
+            width: 100px;
+            height: 100px;
+            margin: 5px;
+        }
+        .image-gallery .large-image {
+            width: 300px;
+            height: 300px;
+            display: block;
+            margin-top: 20px;
+        }
+        .color-box {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            display: inline-block;
+        }
+        .box1 { background-color: lightcoral; }
+        .box2 { background-color: lightblue; }
+        .box3 { background-color: lightgreen; }
+    </style>
+</head>
+<body>
+
+    <!-- Exercício 1: Interação com Eventos -->
+    <h2>Interação com Eventos</h2>
+    <input type="text" id="textInput" placeholder="Digite algo">
+    <button id="showMessageButton">Mostrar Mensagem</button>
+    <p id="message"></p>
+
+    <!-- Exercício 2: Calculadora Simples -->
+    <h2>Calculadora Simples</h2>
+    <input type="number" id="num1" placeholder="Número 1">
+    <input type="number" id="num2" placeholder="Número 2">
+    <select id="operation">
+        <option value="add">Adicionar</option>
+        <option value="subtract">Subtrair</option>
+        <option value="multiply">Multiplicar</option>
+        <option value="divide">Dividir</option>
+    </select>
+    <button id="calculateButton">Calcular</button>
+    <p id="calculationResult"></p>
+
+    <!-- Exercício 3: Lista de Tarefas -->
+    <h2>Lista de Tarefas</h2>
+    <input type="text" id="taskInput" placeholder="Nova tarefa">
+    <button id="addTaskButton">Adicionar Tarefa</button>
+    <ul id="taskList"></ul>
+
+    <!-- Exercício 4: Galeria de Imagens -->
+    <h2>Galeria de Imagens</h2>
+    <div class="image-gallery">
+        <img src="https://via.placeholder.com/100" alt="Image 1" class="thumbnail" data-large="https://via.placeholder.com/300">
+        <img src="https://via.placeholder.com/100" alt="Image 2" class="thumbnail" data-large="https://via.placeholder.com/300/ff0000">
+        <img src="https://via.placeholder.com/100" alt="Image 3" class="thumbnail" data-large="https://via.placeholder.com/300/00ff00">
+        <img src="https://via.placeholder.com/100" alt="Image 4" class="thumbnail" data-large="https://via.placeholder.com/300/0000ff">
+        <img src="https://via.placeholder.com/100" alt="Image 5" class="thumbnail" data-large="https://via.placeholder.com/300/ffff00">
+        <img src="https://via.placeholder.com/100" alt="Image 6" class="thumbnail" data-large="https://via.placeholder.com/300/ff00ff">
+        <img src="https://via.placeholder.com/100" alt="Image 7" class="thumbnail" data-large="https://via.placeholder.com/300/00ffff">
+        <img src="https://via.placeholder.com/100" alt="Image 8" class="thumbnail" data-large="https://via.placeholder.com/300/000000">
+    </div>
+    <img id="largeImage" class="large-image" src="" alt="Large Image">
+
+    <!-- Exercício 5: Jogo de Adivinhação -->
+    <h2>Jogo de Adivinhação</h2>
+    <input type="number" id="guessInput" placeholder="Digite seu palpite">
+    <button id="guessButton">Adivinhar</button>
+    <p id="guessMessage"></p>
+
+    <!-- Exercício 6: Manipulação de Classes -->
+    <h2>Manipulação de Classes</h2>
+    <div id="colorDivs">
+        <div class="color-box box1"></div>
+        <div class="color-box box2"></div>
+        <div class="color-box box3"></div>
+    </div>
+    <button id="changeClassesButton">Trocar Classes</button>
+
+    <script>
+        // Exercício 1: Interação com Eventos
+        document.getElementById('showMessageButton').addEventListener('click', function() {
+            var inputText = document.getElementById('textInput').value;
+            document.getElementById('message').textContent = 'Você digitou: ' + inputText;
+        });
+
+        // Exercício 2: Calculadora Simples
+        document.getElementById('calculateButton').addEventListener('click', function() {
+            var num1 = parseFloat(document.getElementById('num1').value);
+            var num2 = parseFloat(document.getElementById('num2').value);
+            var operation = document.getElementById('operation').value;
+            var result;
+
+            if (isNaN(num1) || isNaN(num2)) {
+                document.getElementById('calculationResult').textContent = 'Por favor, insira números válidos.';
+                return;
+            }
+
+            switch (operation) {
+                case 'add':
+                    result = num1 + num2;
+                    break;
+                case 'subtract':
+                    result = num1 - num2;
+                    break;
+                case 'multiply':
+                    result = num1 * num2;
+                    break;
+                case 'divide':
+                    result = num1 / num2;
+                    break;
+                default:
+                    result = 'Operação desconhecida.';
+            }
+            document.getElementById('calculationResult').textContent = 'Resultado: ' + result;
+        });
+
+        // Exercício 3: Lista de Tarefas
+        document.getElementById('addTaskButton').addEventListener('click', function() {
+            var taskInput = document.getElementById('taskInput').value;
+            if (taskInput) {
+                var taskList = document.getElementById('taskList');
+                var li = document.createElement('li');
+                li.innerHTML = `<span>${taskInput}</span> <button class="completeButton">Concluir</button> <button class="deleteButton">Excluir</button>`;
+                taskList.appendChild(li);
+                document.getElementById('taskInput').value = '';
+                saveTasks();
+            }
+        });
+
+        document.getElementById('taskList').addEventListener('click', function(event) {
+            if (event.target.classList.contains('deleteButton')) {
+                event.target.parentElement.remove();
+                saveTasks();
+            } else if (event.target.classList.contains('completeButton')) {
+                var span = event.target.previousElementSibling;
+                span.classList.toggle('completed');
+            }
+        });
+
+        function saveTasks() {
+            var tasks = [];
+            document.querySelectorAll('#taskList li').forEach(function(li) {
+                tasks.push({
+                    text: li.querySelector('span').textContent,
+                    completed: li.querySelector('span').classList.contains('completed')
+                });
+            });
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        function loadTasks() {
+            var tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+            var taskList = document.getElementById('taskList');
+            tasks.forEach(function(task) {
+                var li = document.createElement('li');
+                li.innerHTML = `<span class="${task.completed ? 'completed' : ''}">${task.text}</span> <button class="completeButton">Concluir</button> <button class="deleteButton">Excluir</button>`;
+                taskList.appendChild(li);
+            });
+        }
+        loadTasks();
+
+        // Exercício 4: Galeria de Imagens
+        document.querySelectorAll('.thumbnail').forEach(function(img) {
+            img.addEventListener('click', function() {
+                var largeImage = document.getElementById('largeImage');
+                largeImage.src = img.getAttribute('data-large');
+            });
+        });
+
+        // Exercício 5: Jogo de Adivinhação
+        var randomNumber = Math.floor(Math.random() * 100) + 1;
+
+        document.getElementById('guessButton').addEventListener('click', function() {
+            var guess = parseInt(document.getElementById('guessInput').value, 10);
+            var message = '';
+
+            if (isNaN(guess)) {
+                message = 'Por favor, insira um número válido.';
+            } else if (guess < randomNumber) {
+                message = 'Muito baixo!';
+            } else if (guess > randomNumber) {
+                message = 'Muito alto!';
+            } else {
+                message = 'Parabéns! Você acertou!';
+                randomNumber = Math.floor(Math.random() * 100) + 1; // Novo número para o próximo jogo
+            }
+
+            document.getElementById('guessMessage').textContent = message;
+        });
+
+        // Exercício 6: Manipulação de Classes
+        document.getElementById('changeClassesButton').addEventListener('click', function() {
+            var boxes = document.querySelectorAll('.color-box');
+            boxes[0].classList.toggle('box1');
+            boxes[0].classList.toggle('box2');
+            boxes[1].classList.toggle('box1');
+            boxes[1].classList.toggle('box3');
+            boxes[2].classList.toggle('box2');
+            boxes[2].classList.toggle('box3');
+        });
+    </script>
+</body>
+</html>
